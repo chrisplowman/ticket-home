@@ -109,7 +109,7 @@
 
         <div class="editor-section">
             <div class="illustration-container">
-<?xml version="1.0" encoding="UTF-8"?>
+                <?xml version="1.0" encoding="UTF-8"?>
 <svg id="illustration" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.89 595.28">
   <defs>
     <style>
@@ -461,7 +461,7 @@
             <div class="controls">
                 <div class="control-group">
                     <label for="textInput">Edit Text:</label>
-                    <textarea id="textInput" placeholder="Enter your text here..." onInput="updateText()">CHLOE KELLY</textarea>
+                    <textarea id="textInput" placeholder="Enter your text here..." onInput="updateText()">JESS BROAD</textarea>
                 </div>
 
                 <div class="control-group">
@@ -484,11 +484,22 @@
         // Update text in the SVG when input changes
         function updateText() {
             const textInput = document.getElementById('textInput');
-            const textElement = document.querySelector('.cls-1 tspan');
+            // Try multiple ways to find the text element
+            const textElement = document.querySelector('.cls-1 tspan') || 
+                              document.querySelector('.cls-1') ||
+                              document.querySelector('text tspan') ||
+                              document.querySelector('text');
             
             if (textElement && textInput) {
                 // Convert to uppercase before updating the SVG
-                textElement.textContent = textInput.value.toUpperCase();
+                if (textElement.tagName === 'tspan') {
+                    textElement.textContent = textInput.value.toUpperCase();
+                } else {
+                    // If it's a text element, update its content
+                    textElement.textContent = textInput.value.toUpperCase();
+                }
+            } else {
+                console.log('Text element not found. Looking for .cls-1 tspan or similar.');
             }
         }
 
@@ -510,10 +521,13 @@
         // Export the SVG as PDF
         function exportPDF() {
             const { jsPDF } = window.jspdf;
-            const svg = document.getElementById('illustration');
+            // Try multiple ways to find the SVG
+            let svg = document.getElementById('illustration') || 
+                     document.querySelector('svg') || 
+                     document.querySelector('.demo-svg');
             
             if (!svg) {
-                alert('Illustration not found.');
+                alert('Illustration not found. Make sure your SVG has id="illustration"');
                 return;
             }
 
